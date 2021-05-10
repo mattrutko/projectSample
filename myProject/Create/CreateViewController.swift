@@ -11,8 +11,8 @@ struct Category {
 }
 
 class CreateViewController: UIViewController {
-  
-   
+
+
     public var tableView: UITableView = {
         var tableView = UITableView()
         tableView.register(CreatePublishTableViewCell.self, forCellReuseIdentifier: CreatePublishTableViewCell.identifier)
@@ -21,7 +21,9 @@ class CreateViewController: UIViewController {
     
     public var data: [Category] = [
         Category(title: "Who can see this Post") ]
-        
+
+    var selected: String?
+
     override func viewDidLoad() {
         super.viewDidLoad()
         view.addSubview(tableView)
@@ -73,8 +75,8 @@ extension CreateViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: CreatePublishTableViewCell.identifier, for: indexPath)
-        
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: CreatePublishTableViewCell.identifier, for: indexPath) as? CreatePublishTableViewCell else { return UITableViewCell() }
+        cell.mySelection.text = selected ?? ""
         cell.accessoryType = .disclosureIndicator
         return cell
     }
@@ -82,7 +84,10 @@ extension CreateViewController: UITableViewDelegate, UITableViewDataSource {
 
 extension CreateViewController: PublishSelectionDelegate {
     func didTapChoice(selection: String) {
-        
+        selected = selection
+        DispatchQueue.main.async {
+            self.tableView.reloadData()
+        }
     }
     
 }
